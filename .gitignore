@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+
+# données locales (générées au premier lancement)
+/data/*.json
+
+# env & divers
+.env*.local
+.DS_Store
+*.log
+next-env.d.ts
+tsconfig.tsbuildinfo
