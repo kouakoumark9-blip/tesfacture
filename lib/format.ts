@@ -1,105 +1,136 @@
-import type { Document, Line, Totals } from "./types";
+/**
+ * Formats partagés — français, FCFA, fuseau Africa/Abidjan.
+ * Aucune dépendance serveur : utilisable dans les composants client.
+ */
 
-const nf0 = new Intl.NumberFormat("fr-FR", {
-  minimumFractionDigits: 0,
+const TZ = "Africa/Abidjan";
+
+const intFormatter = new Intl.NumberFormat("fr-FR", {
   maximumFractionDigits: 0,
-});
-const nf2 = new Intl.NumberFormat("fr-FR", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  minimumFractionDigits: 0,
 });
 
-/** 1 250 000 FCFA */
-export function money(amount: number, currency = "FCFA"): string {
-  const rounded = Math.round(amount);
-  return `${nf0.format(rounded)} ${currency}`;
+/** 60000 -> "60 000 FCFA" (espace insécable fine convertie en espace simple) */
+export function money(amount: number | string | null | undefined, currency = "FCFA"): string {
+  const value = Math.round(Number(amount) || 0);
+  const formatted = intFormatter.format(value).replace(/\u202f|\u00a0/g, " ");
+  return `${formatted} ${currency}`;
 }
 
-/** 1 250 000 (sans devise, pour les tableaux) */
-export function num(amount: number): string {
-  return nf0.format(Math.round(amount));
+/** 60000 -> "60 000" */
+export function amount(value: number | string | null | undefined): string {
+  return intFormatter.format(Math.round(Number(value) || 0)).replace(/\u202f|\u00a0/g, " ");
 }
 
-export function num2(amount: number): string {
-  return nf2.format(amount);
-}
-
-export function lineTotal(line: Line): number {
-  return (Number(line.quantity) || 0) * (Number(line.unitPrice) || 0);
-}
-
-export function lineVat(line: Line): number {
-  return lineTotal(line) * ((Number(line.vatRate) || 0) / 100);
-}
-
-export function docTotals(doc: Pick<Document, "lines">): Totals {
-  const subtotal = doc.lines.reduce((s, l) => s + lineTotal(l), 0);
-  const vat = doc.lines.reduce((s, l) => s + lineVat(l), 0);
-  return { subtotal, vat, total: subtotal + vat };
-}
-
-/** "2026-10-24" -> "24 oct. 2026" */
-export function formatDate(value?: string | null): string {
+/** Date ISO (YYYY-MM-DD) ou Date -> "24/10/2026" */
+export function dateShort(value: string | Date | null | undefined): string {
   if (!value) return "—";
-  const d = new Date(`${value}T12:00:00`);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("fr-FR", {
+  const d = toDate(value);
+  if (!d) return "—";
+  return new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
-    month: "short",
+    month: "2-digit",
     year: "numeric",
-  });
+    timeZone: TZ,
+  }).format(d);
 }
 
-export function formatDateLong(value?: string | null): string {
+/** "24 octobre 2026" */
+export function dateLong(value: string | Date | null | undefined): string {
   if (!value) return "—";
-  const d = new Date(`${value}T12:00:00`);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("fr-FR", {
+  const d = toDate(value);
+  if (!d) return "—";
+  return new Intl.DateTimeFormat("fr-FR", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+    timeZone: TZ,
+  }).format(d);
 }
 
-export function today(): string {
-  return new Date().toISOString().slice(0, 10);
+/** "24/10/2026 à 14:32" */
+export function dateTime(value: string | Date | null | undefined): string {
+  if (!value) return "—";
+  const d = toDate(value);
+  if (!d) return "—";
+  return new Intl.DateTimeFormat("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: TZ,
+  })
+    .format(d)
+    .replace(",", " à");
 }
 
-export function addDays(iso: string, days: number): string {
-  const d = new Date(`${iso}T12:00:00`);
-  d.setDate(d.getDate() + days);
+function toDate(value: string | Date): Date | null {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  // Une date seule (YYYY-MM-DD) est interprétée à midi pour éviter les décalages
+  const iso = /^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T12:00:00Z` : value;
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/** Date du jour (Africa/Abidjan) au format YYYY-MM-DD */
+export function todayISO(): string {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+  return parts; // en-CA => YYYY-MM-DD
+}
+
+export function addDaysISO(iso: string, days: number): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
 
-export function isOverdue(doc: Document): boolean {
-  if (doc.type !== "facture") return false;
-  if (doc.status === "payee" || doc.status === "annulee" || doc.status === "brouillon") return false;
-  return doc.dueDate < today();
+export function addMonthsISO(iso: string, months: number): string {
+  const d = new Date(`${iso}T12:00:00Z`);
+  const day = d.getUTCDate();
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + months);
+  const lastDay = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  d.setUTCDate(Math.min(day, lastDay));
+  return d.toISOString().slice(0, 10);
 }
 
-export function daysLate(doc: Document): number {
-  if (!isOverdue(doc)) return 0;
-  const due = new Date(`${doc.dueDate}T12:00:00`).getTime();
-  const now = new Date(`${today()}T12:00:00`).getTime();
-  return Math.max(0, Math.round((now - due) / 86_400_000));
+export function daysBetween(fromISO: string, toISODate: string): number {
+  const a = new Date(`${fromISO}T12:00:00Z`).getTime();
+  const b = new Date(`${toISODate}T12:00:00Z`).getTime();
+  return Math.round((b - a) / 86_400_000);
 }
 
-export function monthLabel(iso: string): string {
-  const d = new Date(`${iso}-01T12:00:00`);
-  return d.toLocaleDateString("fr-FR", { month: "short" });
+/** Nombre de jours entre aujourd'hui et une date ISO (négatif si passée). */
+export function daysUntil(iso: string | null | undefined): number | null {
+  if (!iso) return null;
+  return daysBetween(todayISO(), iso.slice(0, 10));
+}
+
+export function isPast(iso: string | null | undefined): boolean {
+  if (!iso) return false;
+  return iso < todayISO();
+}
+
+export function monthLabel(key: string): string {
+  // key = YYYY-MM
+  const d = new Date(`${key}-01T12:00:00Z`);
+  return new Intl.DateTimeFormat("fr-FR", { month: "short", timeZone: TZ })
+    .format(d)
+    .replace(".", "");
 }
 
 export function initials(name: string): string {
-  return name
+  return (name || "?")
+    .trim()
     .split(/\s+/)
-    .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
-}
-
-export function daysUntil(iso: string): number {
-  const target = new Date(`${iso}T12:00:00`).getTime();
-  const now = new Date(`${today()}T12:00:00`).getTime();
-  return Math.round((target - now) / 86_400_000);
 }

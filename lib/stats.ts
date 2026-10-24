@@ -1,119 +1,185 @@
-import type { Client, Document } from "./types";
-import { docTotals, isOverdue, today } from "./format";
+/**
+ * Agrégats du tableau de bord — fonctions pures, testées (lib/stats.test.ts).
+ *
+ * Définitions (à respecter partout) :
+ * - Facturé   : total des factures (FAC) non annulées émises sur la période.
+ * - Encaissé  : somme des tranches dont paid_at est dans la période.
+ * - À encaisser : total des factures non annulées − tranches déjà payées.
+ * - En retard : tranches non payées dont l'échéance est dépassée.
+ * - Devis et bons de livraison ne comptent jamais dans le chiffre d'affaires.
+ */
+import type { Period } from "./period";
+import { inRange } from "./period";
+import { todayISO } from "./format";
 
-export type MonthPoint = { key: string; label: string; paid: number; pending: number };
+export type StatsDoc = {
+  id: string;
+  type: string;
+  status: string;
+  number: string;
+  total: number;
+  clientId: string | null;
+  clientName: string;
+  issueDate: string;
+  dueDate: string | null;
+  paymentMethods: string[];
+  createdAt: string;
+};
 
-export function monthKey(iso: string) {
-  return iso.slice(0, 7);
+export type StatsInstallment = {
+  id: string;
+  documentId: string;
+  label: string;
+  amount: number;
+  dueDate: string | null;
+  paidAt: string | null; // YYYY-MM-DD
+  method: string | null;
+};
+
+export type DashboardMetrics = {
+  billed: number;
+  collected: number;
+  toCollect: number;
+  overdueAmount: number;
+  overdueCount: number;
+  quotesPending: number;
+  quotesSent: number;
+  deliveryNotes: number;
+  documentsCount: number;
+};
+
+export type MonthPoint = { key: string; label: string; billed: number; collected: number };
+
+export function computeMetrics(
+  docs: StatsDoc[],
+  parts: StatsInstallment[],
+  period: Period
+): DashboardMetrics {
+  const invoices = docs.filter((d) => d.type === "FAC" && d.status !== "cancelled");
+  const periodInvoices = invoices.filter((d) => inRange(d.issueDate, period));
+  const periodParts = parts.filter((p) => p.paidAt && inRange(p.paidAt, period));
+
+  const docById = new Map(docs.map((d) => [d.id, d]));
+
+  const billed = periodInvoices.reduce((sum, d) => sum + d.total, 0);
+  const collected = periodParts.reduce((sum, p) => sum + p.amount, 0);
+
+  // À encaisser : factures de la période, moins ce qui est déjà réglé (toutes périodes)
+  const toCollect = periodInvoices.reduce((sum, doc) => {
+    const paid = parts
+      .filter((p) => p.documentId === doc.id && p.paidAt)
+      .reduce((s, p) => s + p.amount, 0);
+    return sum + Math.max(0, doc.total - paid);
+  }, 0);
+
+  const today = todayISO();
+  const overdueParts = parts.filter((p) => {
+    if (p.paidAt) return false;
+    const doc = docById.get(p.documentId);
+    if (!doc || doc.type !== "FAC" || doc.status === "cancelled") return false;
+    return Boolean(p.dueDate && p.dueDate < today);
+  });
+
+  const overdueAmount = overdueParts.reduce((sum, p) => sum + p.amount, 0);
+  const overdueCount = new Set(overdueParts.map((p) => p.documentId)).size;
+
+  const quotes = docs.filter((d) => d.type === "DEV");
+  const quotesPending = quotes.filter(
+    (d) => d.status === "sent" && inRange(d.issueDate, period)
+  ).length;
+  const quotesSent = quotes.filter((d) => d.status !== "draft").length;
+
+  return {
+    billed,
+    collected,
+    toCollect,
+    overdueAmount,
+    overdueCount,
+    quotesPending,
+    quotesSent,
+    deliveryNotes: docs.filter((d) => d.type === "BL" && inRange(d.issueDate, period)).length,
+    documentsCount: docs.filter((d) => inRange(d.issueDate, period)).length,
+  };
 }
 
-export function lastMonths(count = 6): { key: string; label: string }[] {
-  const now = new Date(`${today().slice(0, 7)}-01T12:00:00`);
-  const out: { key: string; label: string }[] = [];
-  for (let i = count - 1; i >= 0; i--) {
-    const d = new Date(now);
-    d.setMonth(d.getMonth() - i);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    out.push({
-      key,
-      label: d.toLocaleDateString("fr-FR", { month: "short" }).replace(".", ""),
-    });
+/** Taux de conversion réel : devis transformés en facture / devis envoyés. */
+export function quoteConversion(
+  docs: StatsDoc[],
+  convertedQuoteCount: number
+): number | null {
+  const sentQuotes = docs.filter(
+    (d) => d.type === "DEV" && d.status !== "draft" && d.status !== "cancelled"
+  ).length;
+  if (sentQuotes === 0) return null;
+  return Math.round((convertedQuoteCount / sentQuotes) * 100);
+}
+
+/** 12 derniers mois (facturé / encaissé). */
+export function monthlySeries(
+  docs: StatsDoc[],
+  parts: StatsInstallment[],
+  months = 12,
+  nowISO = todayISO()
+): MonthPoint[] {
+  const current = new Date(`${nowISO.slice(0, 7)}-01T12:00:00Z`);
+  const out: MonthPoint[] = [];
+
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(current);
+    d.setUTCMonth(d.getUTCMonth() - i);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    const label = d
+      .toLocaleDateString("fr-FR", { month: "short", timeZone: "UTC" })
+      .replace(".", "");
+
+    const billed = docs
+      .filter((doc) => doc.type === "FAC" && doc.status !== "cancelled" && doc.issueDate.slice(0, 7) === key)
+      .reduce((sum, doc) => sum + doc.total, 0);
+
+    const collected = parts
+      .filter((p) => p.paidAt && p.paidAt.slice(0, 7) === key)
+      .reduce((sum, p) => sum + p.amount, 0);
+
+    out.push({ key, label, billed, collected });
   }
+
   return out;
 }
 
-export function monthlySeries(invoices: Document[], count = 6): MonthPoint[] {
-  const months = lastMonths(count);
-  return months.map((m) => {
-    const inMonth = invoices.filter((d) => monthKey(d.issueDate) === m.key);
-    const paid = inMonth
-      .filter((d) => d.status === "payee")
-      .reduce((s, d) => s + docTotals(d).total, 0);
-    const pending = inMonth
-      .filter((d) => d.status !== "payee" && d.status !== "annulee")
-      .reduce((s, d) => s + docTotals(d).total, 0);
-    return { key: m.key, label: m.label, paid, pending };
-  });
+/** Répartition de l'encaissement par moyen de paiement. */
+export function paymentBreakdown(
+  parts: StatsInstallment[],
+  period: Period
+): { method: string; amount: number }[] {
+  const map = new Map<string, number>();
+  for (const part of parts) {
+    if (!part.paidAt || !inRange(part.paidAt, period)) continue;
+    const method = part.method || "Non précisé";
+    map.set(method, (map.get(method) ?? 0) + part.amount);
+  }
+  return [...map.entries()]
+    .map(([method, amount]) => ({ method, amount }))
+    .sort((a, b) => b.amount - a.amount);
 }
 
-export type Kpis = {
-  revenue: number;
-  outstanding: number;
-  overdue: number;
-  overdueCount: number;
-  quotesValue: number;
-  quotesOpen: number;
-  invoiceCount: number;
-  paidCount: number;
-  draftCount: number;
-  averageBasket: number;
-  growth: number | null;
-};
-
-export function computeKpis(docs: Document[]): Kpis {
-  const invoices = docs.filter((d) => d.type === "facture");
-  const quotes = docs.filter((d) => d.type === "devis");
-
-  const paid = invoices.filter((d) => d.status === "payee");
-  const revenue = paid.reduce((s, d) => s + docTotals(d).total, 0);
-
-  const open = invoices.filter(
-    (d) => d.status === "envoyee" || (d.status !== "payee" && d.status !== "annulee" && d.status !== "brouillon")
-  );
-  const overdueDocs = invoices.filter(isOverdue);
-
-  const quotesOpenDocs = quotes.filter((d) => d.status === "brouillon" || d.status === "envoye");
-
-  const series = monthlySeries(invoices, 2);
-  const last = series[1]?.paid ?? 0;
-  const prev = series[0]?.paid ?? 0;
-  const growth = prev > 0 ? Math.round(((last - prev) / prev) * 100) : null;
-
-  return {
-    revenue,
-    outstanding: open.reduce((s, d) => s + docTotals(d).total, 0),
-    overdue: overdueDocs.reduce((s, d) => s + docTotals(d).total, 0),
-    overdueCount: overdueDocs.length,
-    quotesValue: quotesOpenDocs.reduce((s, d) => s + docTotals(d).total, 0),
-    quotesOpen: quotesOpenDocs.length,
-    invoiceCount: invoices.length,
-    paidCount: paid.length,
-    draftCount: invoices.filter((d) => d.status === "brouillon").length,
-    averageBasket: paid.length ? revenue / paid.length : 0,
-    growth,
-  };
-}
-
-export function topClients(clients: Client[], docs: Document[], limit = 5) {
-  const rows = clients
-    .map((c) => {
-      const own = docs.filter(
-        (d) => d.type === "facture" && d.clientId === c.id && d.status === "payee"
-      );
-      return {
-        client: c,
-        total: own.reduce((s, d) => s + docTotals(d).total, 0),
-        count: own.length,
-      };
-    })
-    .filter((r) => r.total > 0)
-    .sort((a, b) => b.total - a.total);
-  return rows.slice(0, limit);
-}
-
-export function clientStats(clientId: string, docs: Document[]) {
-  const own = docs.filter((d) => d.clientId === clientId);
-  const invoices = own.filter((d) => d.type === "facture");
-  const paid = invoices.filter((d) => d.status === "payee");
-  const outstanding = invoices
-    .filter((d) => d.status === "envoyee" && !isOverdue(d))
-    .reduce((s, d) => s + docTotals(d).total, 0);
-  const due = invoices.filter(isOverdue).reduce((s, d) => s + docTotals(d).total, 0);
-  return {
-    documents: own.sort((a, b) => (a.issueDate < b.issueDate ? 1 : -1)),
-    revenue: paid.reduce((s, d) => s + docTotals(d).total, 0),
-    outstanding,
-    due,
-    count: invoices.length,
-  };
+/** 5 meilleurs clients par montant facturé sur la période. */
+export function topClientsByBilled(
+  docs: StatsDoc[],
+  period: Period,
+  limit = 5
+): { clientId: string; name: string; billed: number; documents: number }[] {
+  const map = new Map<string, { name: string; billed: number; documents: number }>();
+  for (const doc of docs) {
+    if (doc.type !== "FAC" || doc.status === "cancelled") continue;
+    if (!inRange(doc.issueDate, period)) continue;
+    const key = doc.clientId ?? doc.clientName;
+    const entry = map.get(key) ?? { name: doc.clientName, billed: 0, documents: 0 };
+    entry.billed += doc.total;
+    entry.documents += 1;
+    map.set(key, entry);
+  }
+  return [...map.entries()]
+    .map(([clientId, value]) => ({ clientId, ...value }))
+    .sort((a, b) => b.billed - a.billed)
+    .slice(0, limit);
 }

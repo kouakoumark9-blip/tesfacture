@@ -1,141 +1,127 @@
-import Link from "next/link";
-import { clsx } from "clsx";
-import { Inbox } from "lucide-react";
+"use client";
 
-export function PageHeader({
-  title,
-  subtitle,
-  actions,
-  eyebrow,
+import { clsx } from "clsx";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+
+export function Alert({
+  children,
+  tone = "error",
 }: {
-  title: string;
-  subtitle?: string;
-  actions?: React.ReactNode;
-  eyebrow?: string;
+  children: React.ReactNode;
+  tone?: "error" | "success" | "info";
 }) {
+  const styles = {
+    error: "border-red-200 bg-red-50 text-red-800",
+    success: "border-brand-200 bg-brand-50 text-brand-800",
+    info: "border-accent-200 bg-accent-50 text-accent-800",
+  }[tone];
+  const Icon = tone === "success" ? CheckCircle2 : AlertCircle;
+
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        {eyebrow && (
-          <p className="mb-1 text-[12px] font-semibold uppercase tracking-wider text-brand-600">
-            {eyebrow}
-          </p>
-        )}
-        <h1 className="text-[26px] font-bold tracking-tight text-slate-900 sm:text-[30px]">
-          {title}
-        </h1>
-        {subtitle && <p className="mt-1 text-[14px] text-slate-500">{subtitle}</p>}
-      </div>
-      {actions && <div className="flex flex-wrap items-center gap-2.5">{actions}</div>}
+    <div
+      role={tone === "error" ? "alert" : "status"}
+      className={clsx(
+        "flex items-start gap-2 rounded-xl border px-3.5 py-3 text-[13.5px] font-medium",
+        styles
+      )}
+    >
+      <Icon className="mt-0.5 size-4 shrink-0" />
+      <span>{children}</span>
     </div>
   );
 }
 
-export function ButtonLink({
-  href,
+export function FieldError({ children }: { children?: React.ReactNode }) {
+  if (!children) return null;
+  return <p className="mt-1 text-[12.5px] font-medium text-red-600">{children}</p>;
+}
+
+export function SubmitButton({
   children,
-  variant = "primary",
+  pending,
   className,
-}: {
-  href: string;
-  children: React.ReactNode;
-  variant?: "primary" | "secondary" | "ghost";
-  className?: string;
+  variant = "primary",
+  ...rest
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  pending?: boolean;
+  variant?: "primary" | "accent" | "ghost" | "outline";
 }) {
+  const variants = {
+    primary: "bg-brand-500 text-white hover:bg-brand-600 shadow-sm",
+    accent: "bg-accent-500 text-white hover:bg-accent-600 shadow-sm",
+    ghost: "text-slate-600 hover:bg-black/5",
+    outline: "border border-black/10 bg-white text-slate-700 hover:bg-black/[0.03]",
+  }[variant];
+
   return (
-    <Link href={href} className={clsx("btn-base", variants[variant], className)}>
+    <button
+      {...rest}
+      disabled={pending || rest.disabled}
+      className={clsx("btn", variants, className)}
+    >
+      {pending && <Loader2 className="size-4 animate-spin" />}
       {children}
-    </Link>
+    </button>
   );
 }
 
-export const variants = {
-  primary:
-    "bg-brand-600 text-white shadow-lg shadow-brand-600/20 hover:bg-brand-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200",
-  secondary:
-    "border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-  danger: "bg-rose-600 text-white shadow-lg shadow-rose-600/20 hover:bg-rose-700",
-};
+export function Spinner({ label = "Chargement…" }: { label?: string }) {
+  return (
+    <div className="flex items-center justify-center gap-2 py-10 text-[13.5px] text-slate-500">
+      <Loader2 className="size-4 animate-spin" />
+      {label}
+    </div>
+  );
+}
 
 export function EmptyState({
   title,
   description,
   action,
+  icon,
 }: {
   title: string;
   description: string;
   action?: React.ReactNode;
+  icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-      <span className="grid size-12 place-items-center rounded-2xl bg-slate-100 text-slate-400">
-        <Inbox className="size-6" />
-      </span>
-      <h3 className="mt-4 text-[15px] font-semibold text-slate-800">{title}</h3>
+    <div className="flex flex-col items-center px-6 py-12 text-center">
+      {icon && (
+        <span className="mb-3 grid size-12 place-items-center rounded-full bg-brand-50 text-brand-500">
+          {icon}
+        </span>
+      )}
+      <h3 className="text-[16px] font-semibold text-slate-900">{title}</h3>
       <p className="mt-1 max-w-sm text-[13.5px] text-slate-500">{description}</p>
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="mt-5 w-full max-w-xs">{action}</div>}
     </div>
   );
 }
 
-export function SectionCard({
-  title,
-  subtitle,
-  action,
+export function Badge({
   children,
-  className,
-  bodyClassName,
+  tone = "neutral",
 }: {
-  title?: string;
-  subtitle?: string;
-  action?: React.ReactNode;
   children: React.ReactNode;
-  className?: string;
-  bodyClassName?: string;
+  tone?: "neutral" | "success" | "warning" | "danger" | "info" | "accent";
 }) {
-  return (
-    <section className={clsx("card overflow-hidden", className)}>
-      {(title || action) && (
-        <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
-          <div>
-            {title && <h2 className="text-[15px] font-semibold text-slate-900">{title}</h2>}
-            {subtitle && <p className="mt-0.5 text-[12.5px] text-slate-500">{subtitle}</p>}
-          </div>
-          {action}
-        </div>
-      )}
-      <div className={bodyClassName}>{children}</div>
-    </section>
-  );
-}
-
-export function Initials({ name, className }: { name: string; className?: string }) {
-  const letters = name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
-  const palette = [
-    "bg-brand-100 text-brand-700",
-    "bg-emerald-100 text-emerald-700",
-    "bg-amber-100 text-amber-700",
-    "bg-sky-100 text-sky-700",
-    "bg-rose-100 text-rose-700",
-    "bg-violet-100 text-violet-700",
-  ];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) % 997;
+  const tones = {
+    neutral: "bg-slate-100 text-slate-600",
+    success: "bg-brand-50 text-brand-700",
+    warning: "bg-amber-50 text-amber-700",
+    danger: "bg-red-50 text-red-700",
+    info: "bg-sky-50 text-sky-700",
+    accent: "bg-accent-50 text-accent-700",
+  }[tone];
   return (
     <span
       className={clsx(
-        "grid size-9 shrink-0 place-items-center rounded-full text-[12px] font-bold",
-        palette[hash % palette.length],
-        className
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-bold",
+        tones
       )}
     >
-      {letters || "?"}
+      {children}
     </span>
   );
 }

@@ -5,11 +5,18 @@ build/
 dist/
 coverage/
 
-# données locales (générées au premier lancement)
-/data/*.json
+# base de données locale PGlite
+.data/
+data/
+
+# documents générés
+/public/generated/
 
 # env & divers
+.env
+.env.local
 .env*.local
+!.env.example
 .DS_Store
 *.log
 next-env.d.ts
