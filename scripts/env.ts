@@ -24,6 +24,6 @@ export function loadEnv() {
     }
   }
   // Valeurs par défaut pour le développement
-  process.env.AUTH_SECRET ??= "dev-secret-factureci-changez-moi";
+  process.env.AUTH_SECRET ??= "dev-secret-tesfacture-changez-moi";
   process.env.ADMIN_PHONES ??= "0700000000";
 }

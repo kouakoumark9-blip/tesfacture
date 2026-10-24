@@ -111,7 +111,7 @@ export default function DocumentActions({
           href="/app/abonnement"
           className="flex items-center justify-between rounded-xl border border-accent-200 bg-accent-50 px-3 py-2.5 text-[12.5px] font-semibold text-accent-800"
         >
-          Le PDF porte la mention « Créé avec FactureCI ». Passer au Pro l&apos;enlève.
+          Le PDF porte la mention « Créé avec TesFacture ». Passer au Pro l&apos;enlève.
           <span aria-hidden>→</span>
         </a>
       )}

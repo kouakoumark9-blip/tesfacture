@@ -22,7 +22,7 @@ import ReminderLink from "@/components/reminder-link";
 import { MonthlyBars, PaymentDonut } from "@/components/dashboard-charts";
 import { Badge, EmptyState } from "@/components/ui";
 
-export const metadata = { title: "Tableau de bord — FactureCI" };
+export const metadata = { title: "Tableau de bord — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage({
@@ -261,7 +261,7 @@ export default async function DashboardPage({
                         compact
                         clientName={row.clientName}
                         clientPhone={row.clientPhone}
-                        companyName={data.companyName || "FactureCI"}
+                        companyName={data.companyName || "TesFacture"}
                         documentNumber={row.documentNumber}
                         installmentLabel={row.label}
                         amount={row.amount}
@@ -317,7 +317,7 @@ export default async function DashboardPage({
                       compact
                       clientName={row.clientName}
                       clientPhone={row.clientPhone}
-                      companyName={data.companyName || "FactureCI"}
+                      companyName={data.companyName || "TesFacture"}
                       documentNumber={row.documentNumber}
                       installmentLabel={row.label}
                       amount={row.amount}

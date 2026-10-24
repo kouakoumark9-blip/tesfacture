@@ -2,16 +2,16 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FactureCI — Factures, devis et bons de livraison en FCFA",
+  title: "TesFacture — Factures, devis et bons de livraison en FCFA",
   description:
-    "FactureCI aide les PME, artisans et freelances de Côte d'Ivoire à créer factures, devis et bons de livraison en FCFA, avec paiement en tranches et envoi WhatsApp.",
-  applicationName: "FactureCI",
+    "TesFacture aide les PME, artisans et freelances de Côte d'Ivoire à créer factures, devis et bons de livraison en FCFA, avec paiement en tranches et envoi WhatsApp.",
+  applicationName: "TesFacture",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "FactureCI" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "TesFacture" },
 };
 
 export const viewport: Viewport = {

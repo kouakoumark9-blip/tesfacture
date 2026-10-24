@@ -61,7 +61,7 @@ export function CompanyForm({
     <form action={action} className="space-y-4">
       {welcome && (
         <div className="rounded-xl border border-accent-200 bg-accent-50 px-4 py-3.5">
-          <p className="text-[14px] font-bold text-accent-800">Bienvenue sur FactureCI 🎉</p>
+          <p className="text-[14px] font-bold text-accent-800">Bienvenue sur TesFacture 🎉</p>
           <p className="mt-0.5 text-[13px] text-accent-800/80">
             Renseignez le nom de votre entreprise : il apparaîtra sur toutes vos factures.
           </p>

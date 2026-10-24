@@ -57,10 +57,10 @@ export function AppHeader({
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link href="/app" className="flex items-center gap-2">
           <span className="grid size-8 place-items-center rounded-lg bg-brand-500 text-[12px] font-black text-white">
-            FC
+            TF
           </span>
           <span className="text-[15px] font-extrabold tracking-tight">
-            Facture<span className="text-accent-500">CI</span>
+            Tes<span className="text-accent-500">Facture</span>
           </span>
         </Link>
 

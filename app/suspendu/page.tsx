@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ShieldOff } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 
-export const metadata = { title: "Compte suspendu — FactureCI" };
+export const metadata = { title: "Compte suspendu — TesFacture" };
 
 export default function SuspenduPage() {
   return (
@@ -14,7 +14,7 @@ export default function SuspenduPage() {
         <h1 className="mt-4 text-[20px] font-extrabold tracking-tight">Compte suspendu</h1>
         <p className="mt-1.5 text-[13.5px] leading-relaxed text-slate-600">
           Votre accès est temporairement suspendu. Vos données sont conservées. Contactez
-          l&apos;administrateur FactureCI pour réactiver votre compte.
+          l&apos;administrateur TesFacture pour réactiver votre compte.
         </p>
         <div className="mt-5 space-y-2">
           <Link href="/" className="btn w-full border border-black/10 bg-white text-slate-700">

@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/session";
 import { listDocuments } from "@/lib/documents";
 import DocumentsList from "@/components/documents-list";
 
-export const metadata = { title: "Devis — FactureCI" };
+export const metadata = { title: "Devis — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function DevisPage() {

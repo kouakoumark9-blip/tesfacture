@@ -6,7 +6,7 @@ import { getCompanyForUser, getDocumentForUser, listClients } from "@/lib/docume
 import { effectivePlan } from "@/lib/plan";
 import DocumentWizard, { type WizardInitial } from "@/components/document-wizard";
 
-export const metadata = { title: "Modifier le document — FactureCI" };
+export const metadata = { title: "Modifier le document — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function ModifierDocumentPage({

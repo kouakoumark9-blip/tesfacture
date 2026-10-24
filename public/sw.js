@@ -1,5 +1,5 @@
-/* FactureCI — service worker (cache de l'interface + page hors ligne) */
-const VERSION = "factureci-v1";
+/* TesFacture — service worker (cache de l'interface + page hors ligne) */
+const VERSION = "tesfacture-v1";
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const OFFLINE_URL = "/offline";

@@ -1,6 +1,6 @@
 {
-  "name": "FactureCI — Factures en FCFA",
-  "short_name": "FactureCI",
+  "name": "TesFacture — Factures en FCFA",
+  "short_name": "TesFacture",
   "description": "Factures, devis et bons de livraison pour les PME ivoiriennes. Paiement en tranches, PDF, WhatsApp.",
   "lang": "fr",
   "dir": "ltr",

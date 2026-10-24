@@ -9,7 +9,7 @@ import { dateShort, daysUntil, todayISO } from "@/lib/format";
 import SubscriptionPlans from "@/components/subscription-plans";
 import { Badge } from "@/components/ui";
 
-export const metadata = { title: "Mon abonnement — FactureCI" };
+export const metadata = { title: "Mon abonnement — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function AbonnementPage() {

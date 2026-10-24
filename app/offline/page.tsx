@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CloudOff, RefreshCw } from "lucide-react";
 
-export const metadata = { title: "Hors connexion — FactureCI" };
+export const metadata = { title: "Hors connexion — TesFacture" };
 
 export default function OfflinePage() {
   return (
@@ -12,7 +12,7 @@ export default function OfflinePage() {
         </span>
         <h1 className="mt-4 text-[20px] font-extrabold tracking-tight">Vous êtes hors connexion</h1>
         <p className="mt-1.5 text-[13.5px] leading-relaxed text-slate-600">
-          FactureCI a besoin du réseau pour enregistrer un document. Vos brouillons sont conservés
+          TesFacture a besoin du réseau pour enregistrer un document. Vos brouillons sont conservés
           sur l&apos;appareil et seront envoyés automatiquement dès le retour de la connexion.
         </p>
         <Link href="/app" className="btn mt-5 w-full bg-brand-500 text-white hover:bg-brand-600">

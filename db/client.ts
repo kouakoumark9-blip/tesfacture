@@ -9,8 +9,8 @@ import * as schema from "./schema";
 export type Db = NodePgDatabase<typeof schema>;
 
 type Global = typeof globalThis & {
-  __factureciDb?: Promise<Db>;
-  __factureciClose?: () => Promise<void>;
+  __tesfactureDb?: Promise<Db>;
+  __tesfactureClose?: () => Promise<void>;
 };
 
 const g = globalThis as Global;
@@ -56,7 +56,7 @@ async function createDb(): Promise<Db> {
       max: 5,
     });
     await runMigrations((sql) => pool.query(sql));
-    g.__factureciClose = async () => {
+    g.__tesfactureClose = async () => {
       await pool.end();
     };
     return drizzlePg(pool, { schema }) as unknown as Db;
@@ -69,7 +69,7 @@ async function createDb(): Promise<Db> {
   const client = new PGlite(dataDir);
   await client.waitReady;
   await runMigrations((sql) => client.exec(sql));
-  g.__factureciClose = async () => {
+  g.__tesfactureClose = async () => {
     await client.close();
   };
   return drizzlePglite(client, { schema }) as unknown as Db;
@@ -77,13 +77,13 @@ async function createDb(): Promise<Db> {
 
 /** Retourne l'instance Drizzle (initialisée et migrée une seule fois). */
 export function getDb(): Promise<Db> {
-  if (!g.__factureciDb) {
-    g.__factureciDb = createDb().catch((error) => {
-      g.__factureciDb = undefined;
+  if (!g.__tesfactureDb) {
+    g.__tesfactureDb = createDb().catch((error) => {
+      g.__tesfactureDb = undefined;
       throw error;
     });
   }
-  return g.__factureciDb;
+  return g.__tesfactureDb;
 }
 
 export { schema };

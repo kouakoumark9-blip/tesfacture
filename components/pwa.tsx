@@ -93,7 +93,7 @@ export function PwaProvider() {
               <Download className="size-4" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-bold">Installer FactureCI</p>
+              <p className="text-[13px] font-bold">Installer TesFacture</p>
               <p className="text-[11.5px] text-slate-500">
                 Accès direct depuis l&apos;écran d&apos;accueil, même sans réseau.
               </p>

@@ -6,7 +6,7 @@ import { effectivePlan } from "@/lib/plan";
 import DocumentWizard from "@/components/document-wizard";
 import { todayISO } from "@/lib/format";
 
-export const metadata = { title: "Nouveau document — FactureCI" };
+export const metadata = { title: "Nouveau document — TesFacture" };
 export const dynamic = "force-dynamic";
 
 const TYPES = [

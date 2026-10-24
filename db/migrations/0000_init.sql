@@ -1,4 +1,4 @@
--- FactureCI — schéma initial (Prompt 1)
+-- TesFacture — schéma initial (Prompt 1)
 -- Appliqué automatiquement au démarrage par db/client.ts
 
 CREATE TABLE IF NOT EXISTS users (

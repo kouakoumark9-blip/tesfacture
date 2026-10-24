@@ -231,7 +231,7 @@ export default function DocumentPreview({
 
       {showWatermark && (
         <p className="mt-5 border-t border-slate-100 pt-2 text-center text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">
-          Créé avec FactureCI
+          Créé avec TesFacture
         </p>
       )}
     </article>

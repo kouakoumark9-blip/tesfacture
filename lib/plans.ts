@@ -23,7 +23,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
       "5 documents par mois",
       "1 utilisateur",
       "Factures, devis et bons de livraison",
-      "PDF avec la mention « Créé avec FactureCI »",
+      "PDF avec la mention « Créé avec TesFacture »",
     ],
   },
   pro: {
@@ -35,7 +35,7 @@ export const PLANS: Record<PlanId, PlanDefinition> = {
     features: [
       "Documents illimités",
       "Votre logo sur les documents",
-      "PDF sans mention FactureCI",
+      "PDF sans mention TesFacture",
       "Envoi par e-mail",
       "Tableau de bord complet",
       "Relances WhatsApp",

@@ -17,10 +17,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { token } = await params;
   const bundle = await getDocumentByToken(token);
-  if (!bundle) return { title: "Document introuvable — FactureCI" };
+  if (!bundle) return { title: "Document introuvable — TesFacture" };
   return {
     title: `${DOC_TYPE_LABEL[bundle.doc.type as "FAC" | "DEV" | "BL"]} ${bundle.doc.number}`,
-    description: `Document partagé par ${bundle.company?.name ?? "une entreprise"} via FactureCI.`,
+    description: `Document partagé par ${bundle.company?.name ?? "une entreprise"} via TesFacture.`,
     robots: { index: false, follow: false },
   };
 }
@@ -83,7 +83,7 @@ export default async function PublicDocumentPage({
 
         <p className="mt-4 flex items-center justify-center gap-1.5 text-[11.5px] text-slate-400">
           <ShieldCheck className="size-3.5" />
-          Document consultable en lecture seule · partagé avec FactureCI
+          Document consultable en lecture seule · partagé avec TesFacture
         </p>
       </main>
     </div>

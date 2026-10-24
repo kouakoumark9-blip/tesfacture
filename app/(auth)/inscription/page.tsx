@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { RegisterForm } from "@/components/auth-forms";
 
-export const metadata = { title: "Créer un compte — FactureCI" };
+export const metadata = { title: "Créer un compte — TesFacture" };
 
 export default function InscriptionPage() {
   return (

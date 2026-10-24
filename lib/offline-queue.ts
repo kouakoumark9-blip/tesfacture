@@ -2,8 +2,8 @@
 
 import type { DocumentInput } from "@/lib/validation";
 
-const KEY = "factureci:queue";
-const DRAFT_KEY = "factureci:draft";
+const KEY = "tesfacture:queue";
+const DRAFT_KEY = "tesfacture:draft";
 
 export type QueuedDocument = {
   id: string;

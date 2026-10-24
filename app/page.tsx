@@ -50,10 +50,10 @@ export default function LandingPage() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2">
             <span className="grid size-9 place-items-center rounded-xl bg-brand-500 text-[13px] font-black text-white">
-              FC
+              TF
             </span>
             <span className="text-[17px] font-extrabold tracking-tight">
-              Facture<span className="text-accent-500">CI</span>
+              Tes<span className="text-accent-500">Facture</span>
             </span>
           </Link>
 
@@ -85,7 +85,7 @@ export default function LandingPage() {
                 prêtes en 2 minutes.
               </h1>
               <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-slate-600">
-                FactureCI crée vos factures, devis et bons de livraison depuis votre téléphone.
+                TesFacture crée vos factures, devis et bons de livraison depuis votre téléphone.
                 Paiement en tranches, montant en lettres, envoi WhatsApp, PDF professionnel.
               </p>
 
@@ -228,7 +228,7 @@ export default function LandingPage() {
 
       <footer className="border-t border-black/5 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 text-[12.5px] text-slate-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} FactureCI · Abidjan, Côte d&apos;Ivoire</p>
+          <p>© {new Date().getFullYear()} TesFacture · Abidjan, Côte d&apos;Ivoire</p>
           <p>Montants en FCFA · Fuseau Africa/Abidjan</p>
         </div>
       </footer>

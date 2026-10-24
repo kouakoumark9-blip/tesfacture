@@ -4,8 +4,8 @@
  */
 type Entry = { count: number; resetAt: number };
 
-const g = globalThis as typeof globalThis & { __factureciRateLimit?: Map<string, Entry> };
-const store = (g.__factureciRateLimit ??= new Map<string, Entry>());
+const g = globalThis as typeof globalThis & { __tesfactureRateLimit?: Map<string, Entry> };
+const store = (g.__tesfactureRateLimit ??= new Map<string, Entry>());
 
 export function checkRateLimit(
   key: string,

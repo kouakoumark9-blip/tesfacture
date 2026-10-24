@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/auth-forms";
 
-export const metadata = { title: "Connexion — FactureCI" };
+export const metadata = { title: "Connexion — TesFacture" };
 
 export default async function ConnexionPage({
   searchParams,

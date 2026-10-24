@@ -183,8 +183,8 @@ export default function DocumentPdf({
     <Document
       title={`${DOC_TYPE_LABEL[doc.type]} ${doc.number}`}
       author={doc.company.name}
-      creator="FactureCI"
-      producer="FactureCI"
+      creator="TesFacture"
+      producer="TesFacture"
     >
       <Page size="A4" style={styles.page}>
         {/* En-tête */}
@@ -370,14 +370,14 @@ export default function DocumentPdf({
           </View>
         </View>
 
-        {watermark && <Text style={styles.watermark}>Créé avec FactureCI</Text>}
+        {watermark && <Text style={styles.watermark}>Créé avec TesFacture</Text>}
 
         {/* Pied de page */}
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
             {doc.company.name}
             {doc.company.address ? ` · ${doc.company.address}` : ""}
-            {doc.company.phone ? ` · ${doc.company.phone}` : ""} · Généré avec FactureCI
+            {doc.company.phone ? ` · ${doc.company.phone}` : ""} · Généré avec TesFacture
           </Text>
         </View>
       </Page>

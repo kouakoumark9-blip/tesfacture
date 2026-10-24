@@ -48,7 +48,7 @@ export async function createSubscriptionInvoice(input: {
 
   const issueDate = todayISO();
   const lines = [
-    { description: `Abonnement FactureCI — plan ${plan.label} (30 jours)`, quantity: 1, unitPrice: plan.price },
+    { description: `Abonnement TesFacture — plan ${plan.label} (30 jours)`, quantity: 1, unitPrice: plan.price },
   ];
   const totals = computeTotals({ lines, discountPercent: 0, vatPercent: 0 });
   const number = await nextNumber(input.adminId, "FAC", Number(issueDate.slice(0, 4)));

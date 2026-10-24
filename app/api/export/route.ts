@@ -70,7 +70,7 @@ export async function GET(request: Request) {
   }
 
   const csv = rows.map((row) => row.map(escapeCsv).join(";")).join("\r\n");
-  const filename = `factureci-${kind}-${period.start}_${period.end}.csv`;
+  const filename = `tesfacture-${kind}-${period.start}_${period.end}.csv`;
 
   return new Response(`\uFEFF${csv}`, {
     headers: {

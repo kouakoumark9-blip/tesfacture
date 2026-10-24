@@ -5,7 +5,7 @@ import { listClients, listDocuments } from "@/lib/documents";
 import { amount } from "@/lib/format";
 import { Badge, EmptyState } from "@/components/ui";
 
-export const metadata = { title: "Clients — FactureCI" };
+export const metadata = { title: "Clients — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function ClientsPage({

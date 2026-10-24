@@ -1,11 +1,10 @@
-# FactureCI
+# TesFacture
 
 SaaS de facturation pour les PME, artisans et freelances de Côte d'Ivoire (puis
 d'Afrique de l'Ouest). Mobile-first, installable (PWA), en français, en FCFA.
 
-> « FactureCI » remplace le prototype `tesfacture` : mêmes écrans et mêmes règles
-> de calcul, avec en plus les comptes, la base PostgreSQL, le tableau de bord,
-> l'administration et l'abonnement.
+> Créez une facture, un devis ou un bon de livraison en moins de deux minutes,
+> depuis un téléphone, et envoyez-le sur WhatsApp.
 
 ## Sommaire
 
@@ -53,7 +52,7 @@ d'Afrique de l'Ouest). Mobile-first, installable (PWA), en français, en FCFA.
 - Journal horodaté des actions administrateur.
 
 **Abonnement sans API**
-- Gratuit : 5 documents/mois, PDF avec mention « Créé avec FactureCI ».
+- Gratuit : 5 documents/mois, PDF avec mention « Créé avec TesFacture ».
 - Pro 4 900 FCFA/mois, Business 9 900 FCFA/mois.
 - Blocage **côté serveur** quand la limite est atteinte, avec page « Passez au plan Pro ».
 - Paiement Wave : lien `WAVE_LINK_PRO` / `WAVE_LINK_BUSINESS`, puis saisie de la référence → demande en attente → validation par l'admin.

@@ -10,7 +10,7 @@ async function main() {
 
   const adminPhone = normalizePhone((process.env.ADMIN_PHONES || "0700000000").split(",")[0]);
   const password = process.env.ADMIN_PASSWORD || "Admin1234!";
-  const name = process.env.ADMIN_NAME || "Administrateur FactureCI";
+  const name = process.env.ADMIN_NAME || "Administrateur TesFacture";
 
   const db = await getDb();
 
@@ -44,7 +44,7 @@ async function main() {
       .insert(companies)
       .values({
         userId: inserted[0].id,
-        name: "FactureCI",
+        name: "TesFacture",
         rccm: "CI-ABJ-2026-B-00001",
         taxNumber: "CI-2026-000001-A",
         address: "Abidjan, Côte d'Ivoire",

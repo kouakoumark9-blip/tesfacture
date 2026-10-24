@@ -4,7 +4,7 @@ import { requireUser } from "@/lib/session";
 import { PLANS, documentsThisMonth, effectivePlan } from "@/lib/plan";
 import { amount } from "@/lib/format";
 
-export const metadata = { title: "Limite atteinte — FactureCI" };
+export const metadata = { title: "Limite atteinte — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function LimitePage() {

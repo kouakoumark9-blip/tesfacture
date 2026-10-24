@@ -4,7 +4,7 @@ import { requireUser } from "@/lib/session";
 import { getCompany } from "@/lib/actions/company";
 import { CompanyForm } from "@/components/company-form";
 
-export const metadata = { title: "Mon entreprise — FactureCI" };
+export const metadata = { title: "Mon entreprise — TesFacture" };
 export const dynamic = "force-dynamic";
 
 export default async function ProfilEntreprisePage({
