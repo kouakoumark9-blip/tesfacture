@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque";
+
+@theme {
+  --font-sans: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #e8f3ed;
+  --color-brand-100: #cfe7db;
+  --color-brand-200: #a2cfb8;
+  --color-brand-300: #6db392;
+  --color-brand-400: #359169;
+  --color-brand-500: #0e6b43;
+  --color-brand-600: #0e6b43;
+  --color-brand-700: #0b5737;
+  --color-brand-800: #08432a;
+  --color-brand-900: #06301f;
+
+  --color-accent-50: #fff4e6;
+  --color-accent-100: #ffe6c7;
+  --color-accent-200: #fec98a;
+  --color-accent-300: #fda94d;
+  --color-accent-400: #f79421;
+  --color-accent-500: #f77f00;
+  --color-accent-600: #d96b00;
+  --color-accent-700: #a85200;
+
+  --color-canvas: #f5f8f4;
+  --color-ink: #12241b;
+
+  --radius-card: 12px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
+  }
+
+  /* Mode sombre automatique */
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #0b1410;
+      color: #e9f2ec;
+    }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+@utility card {
+  @apply rounded-xl border border-black/[0.07] bg-white shadow-[0_1px_2px_rgba(16,36,24,0.04)];
+}
+
+@utility field {
+  @apply min-h-12 w-full rounded-xl border border-black/10 bg-white px-3.5 py-3 text-base
+    text-slate-900 outline-none transition placeholder:text-slate-400
+    focus:border-brand-500 focus:ring-4 focus:ring-brand-100 disabled:opacity-60;
+}
+
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-[15px]
+    font-semibold transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility label {
+  @apply mb-1.5 block text-[13.5px] font-semibold text-slate-700;
+}
+
+@utility hint {
+  @apply mt-1 text-[12.5px] text-slate-500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: #12201a;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  .field {
+    background-color: #0f1c17;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #e9f2ec;
+  }
+  .label {
+    color: #cfe0d6;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.28s ease-out both;
+}
