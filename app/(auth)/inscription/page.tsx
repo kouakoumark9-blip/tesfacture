@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/auth-forms";
+import { auth } from "@/lib/auth";
 
 export const metadata = { title: "Créer un compte — TesFacture" };
 
-export default function InscriptionPage() {
+export default async function InscriptionPage() {
+  const session = await auth();
+  if (session?.user?.id) redirect("/app");
+
   return (
     <div className="rise">
       <h1 className="text-[26px] font-extrabold tracking-tight">Créer votre compte</h1>

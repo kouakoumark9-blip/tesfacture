@@ -165,6 +165,7 @@ comptent jamais dans le chiffre d'affaires.**
 ```
 app/
   (auth)/connexion, inscription      comptes
+  page.tsx                           accueil public (redirige vers /app si connecté)
   app/                               espace utilisateur (protégé)
     page.tsx                         tableau de bord + filtres de période
     documents/                       liste, création (3 étapes), détail, édition

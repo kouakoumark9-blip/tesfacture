@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import {
   ArrowRight,
   Check,
@@ -43,7 +45,11 @@ const features = [
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // Un utilisateur connecté va directement à son tableau de bord.
+  const session = await auth();
+  if (session?.user?.id) redirect("/app");
+
   return (
     <div className="min-h-dvh bg-canvas">
       <header className="sticky top-0 z-30 border-b border-black/5 bg-canvas/85 backdrop-blur">

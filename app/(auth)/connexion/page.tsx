@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth-forms";
+import { auth } from "@/lib/auth";
 
 export const metadata = { title: "Connexion — TesFacture" };
 
@@ -9,6 +11,9 @@ export default async function ConnexionPage({
   searchParams: Promise<{ suivant?: string; message?: string }>;
 }) {
   const { suivant, message } = await searchParams;
+
+  const session = await auth();
+  if (session?.user?.id) redirect("/app");
 
   return (
     <div className="rise">
